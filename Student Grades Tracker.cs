@@ -1,63 +1,76 @@
-﻿using System.Runtime.Intrinsics.X86;
-using System.Xml.Linq;
+using System;
+using System.Collections.Generic;
 
-static void Calculate_avgaandlevel(int[]grades,ref double avg,ref string level)
+enum Level
 {
-    double sum = 0;
-    for (int i = 0; i < grades.Length; i++)
-    {
-        sum += grades[i];
-    }
-    avg = sum / grades.Length;
-
-
-    if (avg >= 0.0 && avg < 20)
-    {
-        level = "Freshman";
-    }
-    else if (avg >= 20 && avg < 40)
-    {
-        level = "Sophomore";
-    }
-    else if (avg >= 40 && avg < 60)
-    {
-        level = "Junior";
-    }
-    else if (avg >= 60 && avg <= 100)
-    {
-        level = "Senior";
-    }
+    Freshman,
+    Sophomore,
+    Junior,
+    Senior
 }
 
-static void display(string name,int[] grades,  double avg, string level)
+class Program
 {
-    Console.WriteLine("------------------------");
-    Console.WriteLine($"Student Name : {name}");
-
-    Console.Write($"Grades : ");
-    for (int i = 0; i < grades.Length; i++)
+    static void CalculateAvgAndLevel(List<int> grades, ref double avg, ref Level level)
     {
-        Console.Write($"{grades[i]} ");
-    }
-    Console.WriteLine();
-    Console.WriteLine($"Average : {avg}");
+        double sum = 0;
 
-    Console.WriteLine($"level : {level}");
-    Console.WriteLine("------------------------");
+        for (int i = 0; i < grades.Count; i++)
+        {
+            sum += grades[i];
+        }
+
+        avg = sum / grades.Count;
+
+        if (avg >= 0 && avg < 20)
+            level = Level.Freshman;
+        else if (avg >= 20 && avg < 40)
+            level = Level.Sophomore;
+        else if (avg >= 40 && avg < 60)
+            level = Level.Junior;
+        else
+            level = Level.Senior;
+    }
+
+    static void Display(string name, List<int> grades, double avg, Level level)
+    {
+        Console.WriteLine("------------------------");
+        Console.WriteLine($"Student Name : {name}");
+
+        Console.Write("Grades : ");
+        for (int i = 0; i < grades.Count; i++)
+        {
+            Console.Write(grades[i] + " ");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Average : {avg:F2}");
+        Console.WriteLine($"Level : {level}");
+        Console.WriteLine("------------------------");
+    }
+
+    static void Main()
+    {
+        Dictionary<string, List<int>> dic = new Dictionary<string, List<int>>();
+
+        Console.Write("Enter your name: ");
+        string name = Console.ReadLine();
+
+        List<int> grades = new List<int>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            Console.Write($"Enter grade {i + 1}: ");
+            grades.Add(int.Parse(Console.ReadLine()));
+        }
+
+        dic.Add(name, grades);
+
+        double avg = 0;
+        Level level = Level.Freshman;
+
+        CalculateAvgAndLevel(dic[name], ref avg, ref level);
+
+        Display(name, dic[name], avg, level);
+    }
 }
-
-    double avg = 0;
-    Console.WriteLine("Enter your name : ");
-    string name = Console.ReadLine();
-
-    int[] grades = new int[5];
-
-    for (int i = 0; i < grades.Length; i++)
-    {
-        Console.WriteLine($"Enter your grade {i + 1} : ");
-        grades[i] = int.Parse(Console.ReadLine());
-    }
-    String level = " ";
-
-    Calculate_avgaandlevel(grades, ref avg,ref level);
-    display(name, grades,  avg, level);
