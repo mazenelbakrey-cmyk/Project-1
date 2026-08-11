@@ -1,144 +1,161 @@
-enum TaskStatus
+enum Menu1
 {
-    Pending,
-    Completed
+    LogIn = 1,
+    CreateAccount
 }
 
-public class TaskDetails
+enum MenuLogin
 {
-    public string Name;
-    public string Description;
-    public TaskStatus Status;
-}
-
-public class ToDoApp
-{
-    List<TaskDetails> Tasks = new List<TaskDetails>();
-
-    public ToDoApp()
-    {
-        Console.WriteLine("1-Add Task . ");
-        Console.WriteLine("2-View Task . ");
-        Console.WriteLine("3-Mark Task as Complete . ");
-        Console.WriteLine("4-Remove Task . ");
-        Console.WriteLine("5-Exit . ");
-    }
-
-    public void AddTask()
-    {
-        TaskDetails task = new TaskDetails();
-
-        Console.Write("Enter Task Name: ");
-        task.Name = Console.ReadLine();
-
-        Console.Write("Enter Task Description: ");
-        task.Description = Console.ReadLine();
-
-        task.Status = TaskStatus.Pending;
-
-        Tasks.Add(task);
-
-        Console.WriteLine("Task added successfully.");
-    }
-
-    public void ViewTask()
-    {
-        Console.WriteLine("Your Tasks:");
-
-        for (int i = 0; i < Tasks.Count; i++)
-        {
-            Console.WriteLine($"{i + 1}. {Tasks[i].Name} - {Tasks[i].Status}");
-            Console.WriteLine($"   Description: {Tasks[i].Description}");
-        }
-    }
-
-    public void MarkTaskAsComplete()
-    {
-        Console.Write("Enter Task number to mark as Complete: ");
-
-        int number = int.Parse(Console.ReadLine());
-        number--;
-
-        if (number >= 0 && number < Tasks.Count)
-        {
-            Tasks[number].Status = TaskStatus.Completed;
-
-            Console.WriteLine("Task marked as complete.");
-        }
-        else
-        {
-            Console.WriteLine("Please enter a valid number.");
-        }
-    }
-
-    public void RemoveTask()
-    {
-        Console.Write("Enter Task number to remove: ");
-
-        int number = int.Parse(Console.ReadLine());
-        number--;
-
-        if (number >= 0 && number < Tasks.Count)
-        {
-            Tasks.RemoveAt(number);
-
-            Console.WriteLine("Task removed successfully.");
-        }
-        else
-        {
-            Console.WriteLine("Please enter a valid number.");
-        }
-    }
+    CheckBalance = 1,
+    DepositMoney,
+    WithdrawMoney,
+    ViewTransactionHistory,
+    Exit
 }
 
 class Program
 {
-    enum ListApp
+    static void DisplayMenu1()
     {
-        AddTask = 1,
-        ViewTask,
-        Mark_task_as_complete,
-        RemoveTask,
-        Exit
+        Console.WriteLine();
+        Console.WriteLine("1- Log in using your account number");
+        Console.WriteLine("2- Create a new account");
+        Console.WriteLine();
+        Console.Write("Enter your choice: ");
+    }
+
+    static void DisplayMenuLogin()
+    {
+        Console.WriteLine();
+        Console.WriteLine("1- Check balance");
+        Console.WriteLine("2- Deposit money");
+        Console.WriteLine("3- Withdraw money");
+        Console.WriteLine("4- View transaction history");
+        Console.WriteLine("5- Exit");
+        Console.WriteLine();
+        Console.Write("Enter your choice: ");
+    }
+
+    static double DepositMoney( ref double balance , double amount)
+    {
+        balance += amount;
+        return balance;
+    }
+
+    static double WithdrawMoney(ref double balance, double amount)
+    {
+        balance -= amount;    
+        return balance;
     }
 
     static void Main()
-    {
-        bool loop = true;
-        ToDoApp app = new ToDoApp();
-
+    {   
+        var sys=new Dictionary<string,int >();
+        bool loop=true;
+        String name;
+        String pin;
+        int accountNumber;
+        double balance = 0;
+        double amount = 0;
+        List<string> history = new List<string>();
         while (loop)
         {
-            Console.WriteLine("Choose an option : ");
-
-            int choice = int.Parse(Console.ReadLine());
-
-            ListApp number = (ListApp)choice;
-
-            switch (number)
+            DisplayMenu1();
+            int Choice1=Convert.ToInt32(Console.ReadLine());
+            Menu1 m1 = (Menu1)Choice1;
+            switch (m1)
             {
-                case ListApp.AddTask:
-                    app.AddTask();
-                    break;
+                case Menu1.LogIn:
+                    Console.WriteLine("Enter the username : ");
+                    name=Console.ReadLine();
+                    Console.WriteLine("Enter the Account number : ");
+                    accountNumber=int.Parse(Console.ReadLine());
+                    if (sys.ContainsKey(name) && sys[name] == accountNumber) {
+                        bool menu=true;
+                        while (menu)
+                        {
+                            DisplayMenuLogin();
+                            int choice2 = Convert.ToInt32(Console.ReadLine());
+                            MenuLogin m2 = (MenuLogin)choice2;
+                            switch (m2)
+                            {
+                                case MenuLogin.CheckBalance:
+                                    Console.WriteLine($"your balance : {balance}");
+                                    break;
+                                case MenuLogin.DepositMoney:
+                                    Console.WriteLine("Enter the amount : ");
+                                    amount = Convert.ToDouble(Console.ReadLine());
+                                    if (amount <= 0)
+                                    {
+                                        Console.WriteLine("Invalid amount.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"You Deposited {amount} in your account , Now your balance : {DepositMoney(ref balance, amount)}" + DateTime.Now);
+                                        history.Add($"Deposited {amount} at {DateTime.Now}");
+                                    }
+                                    break;
+                                case MenuLogin.WithdrawMoney:
+                                    Console.WriteLine("Enter the amount : ");
+                                    amount = Convert.ToDouble(Console.ReadLine());
+                                    if (amount > balance)
+                                    {
+                                        Console.WriteLine("Insufficient balance.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($" You Withdrew    {amount} from your account , Now your balance : {WithdrawMoney(ref balance, amount)}" + DateTime.Now);
+                                        history.Add($"Withdrawed {amount} at {DateTime.Now}");
+                                    }
+                                    break;
+                                case MenuLogin.ViewTransactionHistory:
+                                    Console.WriteLine("Your TransactionHistory : ");
+                                    for (int i = 0; i < history.Count; i++)
+                                    {
+                                        Console.WriteLine(history[i].ToString());
+                                    }
+                                    break;
+                                case MenuLogin.Exit:
+                                    loop = false;
+                                    menu = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Invalid choice.");
+                                    break;
 
-                case ListApp.ViewTask:
-                    app.ViewTask();
+                            }
+                        }
+                    }
+                    else if(!sys.ContainsKey(name))
+                    {
+                        Console.WriteLine($"Invalid user :{name} please enter your username or create an account in first . ");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Invalid {accountNumber} please enter your account number  . ");
+                    }
                     break;
+                case Menu1.CreateAccount:
+                    Console.WriteLine("Enter the username : ");
+                    name = Console.ReadLine();
+                    Random random = new Random();
+                    accountNumber = random.Next(1000, 9999);
 
-                case ListApp.Mark_task_as_complete:
-                    app.MarkTaskAsComplete();
+                    Console.WriteLine($"Your Account Number: {accountNumber}");
+                    while (true)
+                    {
+                        Console.Write("Enter the PIN (must be 4 digits): ");
+                        pin = Console.ReadLine();
+
+                        if (pin.Length == 4)
+                            break;
+
+                        Console.WriteLine("Error: PIN must be 4 digits.");
+                    }   
+                    sys.Add(name, accountNumber);
                     break;
-
-                case ListApp.RemoveTask:
-                    app.RemoveTask();
-                    break;
-
-                case ListApp.Exit:
-                    loop = false;
-                    break;
-
                 default:
-                    Console.WriteLine("enter a valid option : ");
+                    Console.WriteLine("Invalid choice.");
                     break;
             }
         }
