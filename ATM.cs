@@ -50,11 +50,11 @@ class Program
 
     static void Main()
     {   
-        var sys=new Dictionary<string,int >();
+        var sys=new Dictionary<string,string >();
         bool loop=true;
         String name;
-        String pin;
-        int accountNumber;
+        int pin;
+        string accountNumber;
         double balance = 0;
         double amount = 0;
         List<string> history = new List<string>();
@@ -69,7 +69,7 @@ class Program
                     Console.WriteLine("Enter the username : ");
                     name=Console.ReadLine();
                     Console.WriteLine("Enter the Account number : ");
-                    accountNumber=int.Parse(Console.ReadLine());
+                    accountNumber=Console.ReadLine();
                     if (sys.ContainsKey(name) && sys[name] == accountNumber) {
                         bool menu=true;
                         while (menu)
@@ -98,7 +98,12 @@ class Program
                                 case MenuLogin.WithdrawMoney:
                                     Console.WriteLine("Enter the amount : ");
                                     amount = Convert.ToDouble(Console.ReadLine());
-                                    if (amount > balance)
+
+                                    if (amount <= 0)
+                                    {
+                                        Console.WriteLine("Invalid amount.");
+                                    }
+                                    else if (amount > balance)
                                     {
                                         Console.WriteLine("Insufficient balance.");
                                     }
@@ -139,19 +144,20 @@ class Program
                     Console.WriteLine("Enter the username : ");
                     name = Console.ReadLine();
                     Random random = new Random();
-                    accountNumber = random.Next(1000, 9999);
+                    pin = random.Next(1000, 9999);
 
-                    Console.WriteLine($"Your Account Number: {accountNumber}");
+                    Console.WriteLine($"Your Pin: {pin}");
                     while (true)
                     {
-                        Console.Write("Enter the PIN (must be 4 digits): ");
-                        pin = Console.ReadLine();
+                        Console.Write("Enter the Account number (must be 4 digits): ");
+                        accountNumber = Console.ReadLine();
 
-                        if (pin.Length == 4)
+                        if (accountNumber.Length == 4)
                             break;
 
-                        Console.WriteLine("Error: PIN must be 4 digits.");
+                        Console.WriteLine("Error: Account number must be 4 digits.");
                     }   
+
                     sys.Add(name, accountNumber);
                     break;
                 default:
